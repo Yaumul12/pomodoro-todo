@@ -1,0 +1,94 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Pomodoro + Todo</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',sans-serif;background:#0f0f23;color:#fff;min-height:100vh;display:flex;justify-content:center;padding:20px}
+.ob{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:1000;display:flex;justify-content:center;align-items:center}.ob.hide{display:none}
+.oc{background:#1a1a3e;border-radius:20px;padding:40px;max-width:500px;width:90%;text-align:center}
+.oc h2{color:#6c5ce7;font-size:28px;margin-bottom:8px}.oc .sub{color:#888;font-size:14px}
+.stps{margin:25px 0;text-align:left;display:flex;flex-direction:column;gap:18px}
+.st{display:flex;gap:14px;align-items:flex-start}.st .n{width:32px;height:32px;border-radius:50%;background:#6c5ce7;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+.st h4{font-size:14px;margin-bottom:2px}.st p{font-size:12px;color:#888;line-height:1.5}
+.oc button{padding:14px 40px;border:none;border-radius:10px;background:#6c5ce7;color:#fff;font-size:16px;font-weight:600;cursor:pointer}
+.oc .sk{color:#555;font-size:12px;cursor:pointer;margin-top:12px;display:inline-block}
+.app{display:none;max-width:700px;width:100%}.app.show{display:block}
+h1{text-align:center;margin-bottom:5px}h1 span{background:linear-gradient(90deg,#6c5ce7,#48dbfb);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub2{text-align:center;color:#666;margin-bottom:25px;font-size:14px}
+.layout{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:600px){.layout{grid-template-columns:1fr}}
+.panel{background:#1a1a3e;border-radius:14px;padding:20px;border:1px solid #2a2a4e}
+.panel h3{font-size:15px;color:#6c5ce7;margin-bottom:15px}
+.timer-display{font-size:72px;font-weight:200;text-align:center;margin-bottom:10px;font-variant-numeric:tabular-nums}
+.timer-modes{display:flex;justify-content:center;gap:8px;margin-bottom:15px}
+.timer-modes button{padding:6px 14px;border:1px solid #333;border-radius:16px;background:transparent;color:#888;cursor:pointer;font-size:12px}
+.timer-modes button.active{background:#6c5ce7;color:#fff;border-color:#6c5ce7}
+.timer-ctrl{display:flex;justify-content:center;gap:12px;margin-bottom:10px}
+.timer-ctrl button{width:44px;height:44px;border-radius:50%;border:2px solid #333;background:transparent;color:#fff;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center}
+.timer-ctrl button:hover{border-color:#6c5ce7}
+.timer-ctrl button.play{background:#6c5ce7;border-color:#6c5ce7}
+.sessions-row{text-align:center;font-size:12px;color:#555}
+.sessions-row span{color:#6c5ce7;font-weight:600}
+.todo-add{display:flex;gap:8px;margin-bottom:15px}
+.todo-add input{flex:1;padding:10px;border:1px solid #333;border-radius:8px;background:#0f0f23;color:#fff;font-size:13px}
+.todo-add input:focus{outline:none;border-color:#6c5ce7}
+.todo-add button{padding:10px 14px;border:none;border-radius:8px;background:#6c5ce7;color:#fff;cursor:pointer;font-size:13px}
+.todo-list{max-height:300px;overflow-y:auto}
+.todo-item{display:flex;align-items:center;gap:10px;padding:10px;border-bottom:1px solid #0f0f23}
+.todo-item:last-child{border:none}
+.todo-item .check{width:22px;height:22px;border-radius:50%;border:2px solid #333;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:.15s;flex-shrink:0}
+.todo-item .check.done{background:#6c5ce7;border-color:#6c5ce7}
+.todo-item .text{flex:1;font-size:13px}.todo-item .text.done{text-decoration:line-through;color:#555}
+.todo-item .del{cursor:pointer;color:#333;font-size:14px}.todo-item .del:hover{color:#ff6b6b}
+.todo-stats{display:flex;justify-content:space-between;font-size:11px;color:#555;margin-top:10px;padding-top:10px;border-top:1px solid #0f0f23}
+</style></head><body>
+<div class="ob" id="ob"><div class="oc">
+<h2>Pomodoro + Todo</h2><p class="sub">Focus timer meets task management</p>
+<div class="stps">
+<div class="st"><div class="n">1</div><div><h4>Add Your Tasks</h4><p>In the right panel, type a task and click Add. Build your to-do list for the session.</p></div></div>
+<div class="st"><div class="n">2</div><div><h4>Start the Timer</h4><p>In the left panel, click Play to start a 25-minute focus session. Work on your tasks!</p></div></div>
+<div class="st"><div class="n">3</div><div><h4>Check Off Tasks</h4><p>Click the circle next to a task to mark it done. Track your progress as you complete them.</p></div></div>
+</div>
+<button onclick="start()">Start Working</button>
+<div class="sk" onclick="start()">Skip</div>
+</div></div>
+<div class="app" id="app">
+<h1><span>Pomodoro + Todo</span></h1><p class="sub2">Focus and get things done</p>
+<div class="layout">
+<div class="panel"><h3>\u23f1 Focus Timer</h3>
+<div class="timer-display" id="timer">25:00</div>
+<div class="timer-modes"><button class="active" onclick="setMode(25,this)">Focus</button><button onclick="setMode(5,this)">Short</button><button onclick="setMode(15,this)">Long</button></div>
+<div class="timer-ctrl"><button onclick="resetTimer()">\u21ba</button><button class="play" id="pb" onclick="toggleTimer()">\u25b6</button><button onclick="skipTimer()">\u23ed</button></div>
+<div class="sessions-row">Sessions: <span id="sessCnt">0</span></div>
+</div>
+<div class="panel"><h3>\u2705 Tasks</h3>
+<div class="todo-add"><input type="text" id="todoIn" placeholder="Add a task..." onkeydown="if(event.key==='Enter')addTodo()"><button onclick="addTodo()">Add</button></div>
+<div class="todo-list" id="todoList"></div>
+<div class="todo-stats"><span>Done: <span id="doneCnt">0</span></span><span>Remaining: <span id="remCnt">0</span></span></div>
+</div>
+</div></div>
+<script>
+var time=1500,running=false,iv,modes=[1500,300,900],modeIdx=0,sessions=0;
+var todos=JSON.parse(localStorage.getItem('pt')||'[]');
+function start(){document.getElementById('ob').classList.add('hide');document.getElementById('app').classList.add('show');localStorage.setItem('pt_seen','1');renderTodos()}
+if(localStorage.getItem('pt_seen')){document.getElementById('ob').classList.add('hide');document.getElementById('app').classList.add('show')}
+function updateTimer(){var m=Math.floor(time/60),s=time%60;document.getElementById('timer').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');document.title=document.getElementById('timer').textContent+' Focus'}
+function toggleTimer(){
+if(running){clearInterval(iv);running=false;document.getElementById('pb').innerHTML='\u25b6'}
+else{running=true;document.getElementById('pb').innerHTML='\u23f8';
+iv=setInterval(function(){time--;if(time<=0){clearInterval(iv);running=false;
+if(modeIdx===0){sessions++;document.getElementById('sessCnt').textContent=sessions}
+document.getElementById('pb').innerHTML='\u25b6';return}updateTimer()},1000)}
+}
+function resetTimer(){clearInterval(iv);running=false;time=modes[modeIdx];updateTimer();document.getElementById('pb').innerHTML='\u25b6'}
+function setMode(m,btn){modeIdx=m===25?0:m===5?1:2;document.querySelectorAll('.timer-modes button').forEach(function(b){b.classList.remove('active')});btn.classList.add('active');resetTimer()}
+function skipTimer(){if(modeIdx===0){sessions++;document.getElementById('sessCnt').textContent=sessions}modeIdx=(modeIdx+1)%3;document.querySelectorAll('.timer-modes button').forEach(function(b,i){b.classList.toggle('active',i===modeIdx)});resetTimer()}
+function addTodo(){var v=document.getElementById('todoIn').value.trim();if(!v)return;todos.unshift({text:v,done:false});document.getElementById('todoIn').value='';save();renderTodos()}
+function toggleTodo(i){todos[i].done=!todos[i].done;save();renderTodos()}
+function delTodo(i){todos.splice(i,1);save();renderTodos()}
+function save(){localStorage.setItem('pt',JSON.stringify(todos))}
+function renderTodos(){
+var done=todos.filter(function(t){return t.done}).length;
+document.getElementById('doneCnt').textContent=done;document.getElementById('remCnt').textContent=todos.length-done;
+document.getElementById('todoList').innerHTML=todos.map(function(t,i){
+return '<div class="todo-item"><div class="check '+(t.done?'done':'')+'" onclick="toggleTodo('+i+')">'+(t.done?'\u2713':'')+'</div><span class="text '+(t.done?'done':'')+'">'+t.text+'</span><span class="del" onclick="delTodo('+i+')">&times;</span></div>';
+}).join('')||'<p style="text-align:center;color:#555;padding:20px">No tasks yet</p>';
+}
+updateTimer();renderTodos();
+</script></body></html>
